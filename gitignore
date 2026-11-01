@@ -1,0 +1,38 @@
+# Secrets / environment (never commit these)
+.env
+.env.local
+.env.*
+!.env.example
+.streamlit/secrets.toml
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Generated output and logs
+output/
+*.log
+
+# Large source data (e.g. the scanned PDF and OCR text)
+data/
+
+# NOTE: vector_store/ is intentionally NOT ignored so the pre-built
+# embeddings deploy with the app. Add "vector_store/" here if you
+# would rather rebuild it instead.

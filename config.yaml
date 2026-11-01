@@ -1,0 +1,78 @@
+# Configuration for PPH GenAI RAG Pipeline
+
+# PDF Processing
+pdf:
+  input_path: "data/Principles of Public Health.pdf"
+  output_dir: "data/extracted_text"
+
+# OCR Settings (Optimized for Scanned Books)
+ocr:
+  engine: "tesseract"  # Best for scanned books
+  language: "eng"
+  dpi: 300  # Resolution for image conversion (300 is standard for scanned books)
+  preprocessing:
+    deskew: true              # Correct rotated/tilted pages
+    denoise: true             # Remove scanning artifacts
+    contrast_enhancement: true # Improve faded text
+    binarization: true        # Convert to black/white (helps OCR accuracy)
+
+# Chunking Configuration
+chunking:
+  strategy: "semantic"  # Respects paragraph boundaries, combines until 512 tokens
+                        # Options: fixed, semantic, sliding_window
+  chunk_size: 512       # tokens (target size, actual avg ~322)
+  chunk_overlap: 128    # tokens (25% overlap for context continuity)
+  preserve_headers: true
+  min_chunk_size: 100   # minimum to avoid tiny chunks
+
+# Embeddings
+embeddings:
+  model: "text-embedding-3-large"  # OpenAI model
+  # Alternative: sentence-transformers/all-MiniLM-L6-v2
+  dimensions: 3072
+  batch_size: 100
+
+# Vector Store
+vector_store:
+  type: "chromadb"
+  persist_directory: "vector_store"
+  collection_name: "pph_document_chunks"
+  distance_metric: "cosine"
+
+# RAG Configuration
+rag:
+  retrieval:
+    top_k: 10  # Increased from 5 to capture more context including structured tables
+    similarity_threshold: 0.4  # Lowered from 0.5 to retrieve more chunks
+    rerank: false
+  context:
+    max_tokens: 3000
+    include_metadata: true
+
+# LLM Configuration
+llm:
+  provider: "openai"
+  model: "gpt-4o-mini"  # OpenAI model (cost-effective, high quality)
+  temperature: 0.1  # Low for factual accuracy
+  max_tokens: 1000
+  top_p: 0.9
+
+# Questions
+questions:
+  - "What are the main ways to fight disease germs according to the book?"
+  - "How does the book describe the importance of pure air and its effect on health?"
+  - "Based on the principles described in the book, explain why preventing germs from entering the body and maintaining a clean environment together are more effective than either measure alone in reducing disease."
+
+# Output
+output:
+  dir: "output"
+  format: "json"
+  include_supporting_chunks: true
+  log_queries: true
+  log_file: "output/query_logs.csv"
+
+# Streamlit App
+app:
+  title: "PPH GenAI Q&A Assistant"
+  port: 8502
+  theme: "light"
